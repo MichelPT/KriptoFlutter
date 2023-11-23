@@ -20,63 +20,65 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
-      isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Scaffold(
-              body: Center(
+      Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomWidgets.getCustomHeaderText('Sign Up'),
+              const SizedBox(
+                height: 32,
+              ),
+              Form(
+                autovalidateMode: AutovalidateMode.always,
+                key: _formKey,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CustomWidgets.getCustomHeaderText('Sign Up'),
+                    CustomWidgets.getCustomFormField((newValue) {
+                      setState(() {
+                        enteredName = newValue!;
+                      });
+                    }, enteredName, 'Name', 'name'),
                     const SizedBox(
-                      height: 32,
+                      height: 16,
                     ),
-                    Form(
-                      autovalidateMode: AutovalidateMode.always,
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          CustomWidgets.getCustomFormField((newValue) {
-                            setState(() {
-                              enteredName = newValue!;
-                            });
-                          }, enteredName, 'Name', 'name'),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          CustomWidgets.getCustomFormField((newValue) {
-                            setState(() {
-                              enteredEmail = newValue!;
-                            });
-                          }, enteredEmail, 'Email', 'email'),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          CustomWidgets.getCustomFormField((newValue) {
-                            setState(() {
-                              enteredPassword = newValue!;
-                            });
-                          }, enteredPassword, 'Password', 'password'),
-                          const SizedBox(
-                            height: 24,
-                          ),
-                          ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  isLoading = true;
-                                });
-                                _saveActivity();
-                              },
-                              child: const Text('Sign Up')),
-                        ],
-                      ),
-                    )
+                    CustomWidgets.getCustomFormField((newValue) {
+                      setState(() {
+                        enteredEmail = newValue!;
+                      });
+                    }, enteredEmail, 'Email', 'email'),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    CustomWidgets.getCustomFormField((newValue) {
+                      setState(() {
+                        enteredPassword = newValue!;
+                      });
+                    }, enteredPassword, 'Password', 'password'),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          _saveActivity();
+                        },
+                        child: const Text('Sign Up')),
                   ],
                 ),
-              ),
-            ),
+              )
+            ],
+          ),
+        ),
+      ),
+      Visibility(
+        visible: isLoading,
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      )
     ]);
   }
 

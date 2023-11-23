@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wms/custom_widgets/widgets.dart';
 import 'package:wms/modules/http.dart';
-import 'package:wms/screens/admin/admin_landing.dart';
 import 'package:wms/screens/user/home.dart';
 import 'package:wms/screens/auth/register.dart';
 
@@ -49,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       setState(() {
                         enteredPassword = newValue!;
                       });
-                    }, enteredPassword, 'Password', 'password'),
+                    }, enteredPassword, 'Password', 'passwordLogin'),
                     const SizedBox(
                       height: 24,
                     ),
@@ -90,11 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await prefs.setBool('isLoggedIn', true);
         await prefs.setString('token', res['token']);
         prefs.setString('email', email);
-        if (res['user'][0]['role'] == 'admin') {
-          Get.off(() => const AdminLandingScreen());
-        } else {
-          Get.off(() => const HomeScreen());
-        }
+        Get.off(() => const HomeScreen());
       } else {
         Get.snackbar('Login failed', 'Email and password are not valid');
       }

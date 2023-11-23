@@ -20,13 +20,15 @@ class CustomWidgets {
         onSaved: save,
         validator: (value) {
           if (value == null || value.isEmpty || value.trim().length <= 1) {
-            return 'Input form belum valid';
+            return 'Invalid input. Please fill the field';
           } else if (type == 'email' && !EmailValidator.validate(value)) {
             return 'Please enter valid email';
+          } else if (type == 'password' && value.trim().length <= 8) {
+            return 'Password must be at least 8 characters';
           }
           return null;
         },
-        obscureText: type == 'password',
+        obscureText: type == 'password' || type == 'passwordLogin',
         minLines: type == 'logDescription' ? 8 : 1,
         maxLines: type == 'logDescription' ? 8 : 1,
         maxLength: type == 'logTitle' || type == 'email'
@@ -42,5 +44,4 @@ class CustomWidgets {
       ),
     );
   }
-
 }

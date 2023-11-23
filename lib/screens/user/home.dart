@@ -9,6 +9,7 @@ import 'package:wms/models/user_logs.dart';
 import 'package:wms/modules/http.dart' as http_module;
 import 'package:wms/screens/user/add_response.dart';
 import 'package:wms/screens/auth/login.dart';
+import 'package:wms/screens/user/response_details.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -57,16 +58,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 }
               },
             )),
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: ElevatedButton.icon(
-              style: const ButtonStyle(
-                  minimumSize: MaterialStatePropertyAll(Size(25, 60))),
-              onPressed: () {
-                Get.to(() => const AddLogScreen());
-              },
-              icon: const Icon(Icons.add_task_sharp),
-              label: const Text('Add a New Log')),
+        floatingActionButton: Visibility(
+          visible: email!='admin@gmail.com',
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: ElevatedButton.icon(
+                style: const ButtonStyle(
+                    minimumSize: MaterialStatePropertyAll(Size(25, 60))),
+                onPressed: () {
+                  Get.to(() => const AddLogScreen());
+                },
+                icon: const Icon(Icons.add_task_sharp),
+                label: const Text('Add a New Log')),
+          ),
         ),
         body: FutureBuilder<List<UserLogs>>(
           future: http_module.getAllLogsasAdmin(email),
@@ -76,13 +80,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Text('An error has occurred!'),
               );
             } else if (snapshot.hasData) {
+              logsList = snapshot.data!; 
               return ListView.builder(
                 itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) => Card(
-                  child: ListTile(
-                    title: Text(snapshot.data![index].title),
-                    subtitle: Text(snapshot.data![index].description),
-                    leading: Image.memory(Uint8List.fromList(const HexDecoder().convert(snapshot.data![index].image))),
+                itemBuilder: (context, index) => GestureDetector(
+                  onTap: () => Get.to(()=>LogDetails(userLog: snapshot.data![index])),
+                  child: Card(
+                    child: ListTile(
+                      title: Text(snapshot.data![index].userEmail),
+                      subtitle: Text(snapshot.data![index].title),
+                      leading: const Icon(Icons.fiber_smart_record_sharp),
+                    ),
                   ),
                 ),
               );

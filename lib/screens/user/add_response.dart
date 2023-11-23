@@ -1,13 +1,8 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:hex/hex.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mime/mime.dart';
 import 'package:responsive_sizer/responsive_sizer.dart' as responsive_sizer;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wms/custom_widgets/widgets.dart';
@@ -27,6 +22,7 @@ class _AddLogScreenState extends State<AddLogScreen> {
   String enteredTitle = '';
   String enteredDescription = '';
   dynamic image, hex;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -71,11 +67,8 @@ class _AddLogScreenState extends State<AddLogScreen> {
               'Please input your image with the following conditions:\n1. It can prove your work hence it needs to be related to it\n2. It is mandatory to have date and time to be in the image\n3. Please avoid using innapropriate images or photos\n4. Image size must be less than 500kb',
             ),
             SizedBox(
-              height: 10.h,
-            ),
-            SizedBox(
-                width: 20.w,
-                height: 20.h,
+                width: 100.w,
+                height: 30.h,
                 child: image == null
                     ? Image.asset('assets/images/no_image.png')
                     : Image.memory(image)),
@@ -104,11 +97,11 @@ class _AddLogScreenState extends State<AddLogScreen> {
                         ? [
                             imageUpload,
                             SizedBox(
-                              height: 5.h,
+                              height: 1.h,
                             ),
                             textForms,
                             SizedBox(
-                              height: 5.h,
+                              height: 2.h,
                             ),
                             ElevatedButton.icon(
                                 style: ButtonStyle(
@@ -120,7 +113,10 @@ class _AddLogScreenState extends State<AddLogScreen> {
                                         Size(7.w, 8.h))),
                                 icon: const Icon(Icons.file_upload_rounded),
                                 onPressed: uploadNewLog,
-                                label: const Text('Upload Log'))
+                                label: const Text('Upload Log')),
+                            SizedBox(
+                              height: 2.h,
+                            ),
                           ]
                         : [
                             Row(

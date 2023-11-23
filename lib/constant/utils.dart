@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:multi_cipher/multi_cipher.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,8 +9,7 @@ import 'package:wms/modules/http.dart';
 
 class Utils {
   static String baseUrl =
-      Device.deviceType == DeviceType.web ? "localhost:3000" :
-       "10.0.2.2:3000";
+      Device.deviceType == DeviceType.web ? "localhost:3000" : "10.0.2.2:3000";
   static String register = "user/register";
   static String login = "user/login";
   static String getAdminKey = "user/getAdminPublicKey";
@@ -64,16 +65,26 @@ class Utils {
           iv: ivSalsa20);
     } catch (e) {
       if (e is FormatException) {
-        String normalizedText = text.replaceAll(RegExp(r'\s'), '');
-        text = normalizedText.replaceAll(RegExp(r'[^A-Za-z0-9+/=_]'), '');
+        // String normalizedText = text.replaceAll(RegExp(r'\s'), '');
+        // text = normalizedText.replaceAll(RegExp(r'[^A-Za-z0-9+/=_]'), '');
         if (text.length % 4 != 0) {
-          text += '=' * (4 - text.length % 4);
+          text += '_' * (4 - text.length % 4);
         }
         try {
           return encrypterSalsa20.decrypt(Encrypted.fromBase64(text),
               iv: ivSalsa20);
         } catch (e) {
-          rethrow;
+          if (e is FormatException) {
+            String utf8text = decodeB64ToUtf8(text);
+            try {
+              return encrypterSalsa20.decrypt(Encrypted.fromUtf8(utf8text),
+                  iv: ivSalsa20);
+            } catch (e) {
+              rethrow;
+            }
+          } else {
+            rethrow;
+          }
         }
       } else {
         rethrow;
@@ -147,5 +158,19 @@ class Utils {
         description: decryptedDescription,
         image: decryptedImage,
         userEmail: logs.userEmail);
+  }
+
+  static decodeB64ToUtf8(String message) {
+    message =
+        padBase64(message); // pad with underline => ('RU5UUkVHQUdSQVRJU1__')
+    List<int> dec = base64.decode(message);
+    dec = dec.sublist(0, dec.length - RegExp(r'_').allMatches(message).length);
+    return utf8.decode(dec);
+  }
+
+  static String padBase64(String rawBase64) {
+    return (rawBase64.length % 4 > 0)
+        ? rawBase64 += List.filled(4 - (rawBase64.length % 4), "_").join("")
+        : rawBase64;
   }
 }
