@@ -30,45 +30,62 @@ class _AddLogScreenState extends State<AddLogScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Widget textForms = Column(
-      children: [
-        SizedBox(
-          height: 10.h,
+    final Widget textForms = Card(
+      elevation: 1.h,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 5.h,
+            ),
+            const Text(
+                'Input the title for your work log and the description below'),
+            SizedBox(
+              height: 5.h,
+            ),
+            CustomWidgets.getCustomFormField((newValue) {
+              setState(() {
+                enteredTitle = newValue!;
+              });
+            }, enteredTitle, 'Title', 'logTitle'),
+            SizedBox(
+              height: 2.h,
+            ),
+            CustomWidgets.getCustomFormField((newValue) {
+              setState(() {
+                enteredDescription = newValue!;
+              });
+            }, enteredDescription, 'Description', 'logDescription')
+          ],
         ),
-        CustomWidgets.getCustomFormField((newValue) {
-          setState(() {
-            enteredTitle = newValue!;
-          });
-        }, enteredTitle, 'Title', 'logTitle'),
-        SizedBox(
-          height: 5.h,
-        ),
-        CustomWidgets.getCustomFormField((newValue) {
-          setState(() {
-            enteredDescription = newValue!;
-          });
-        }, enteredDescription, 'Description', 'logDescription')
-      ],
+      ),
     );
-    final Widget imageUpload = Column(
-      children: [
-        const Text(
-          'Please input your image with the following conditions:\n1. It can prove your work hence it needs to be related to it\n2. It is mandatory to have date and time to be in the image\n3. Please avoid using innapropriate images or photos',
+    final Widget imageUpload = Card(
+      elevation: 1.h,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            const Text(
+              'Please input your image with the following conditions:\n1. It can prove your work hence it needs to be related to it\n2. It is mandatory to have date and time to be in the image\n3. Please avoid using innapropriate images or photos\n4. Image size must be less than 500kb',
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            SizedBox(
+                width: 20.w,
+                height: 20.h,
+                child: image == null
+                    ? Image.asset('assets/images/no_image.png')
+                    : Image.memory(image)),
+            ElevatedButton.icon(
+                onPressed: pickImage,
+                icon: const Icon(Icons.add_a_photo_rounded),
+                label: const Text('Add an image')),
+          ],
         ),
-        SizedBox(
-          height: 10.h,
-        ),
-        SizedBox(
-            width: 20.w,
-            height: 20.h,
-            child: image == null
-                ? Image.asset('assets/images/no_image.png')
-                : Image.memory(image)),
-        ElevatedButton.icon(
-            onPressed: pickImage,
-            icon: const Icon(Icons.add_a_photo_rounded),
-            label: const Text('Add an image')),
-      ],
+      ),
     );
     return SafeArea(
       child: Scaffold(
@@ -85,8 +102,11 @@ class _AddLogScreenState extends State<AddLogScreen> {
                     children: responsive_sizer.Device.screenType ==
                             responsive_sizer.ScreenType.mobile
                         ? [
-                            textForms,
                             imageUpload,
+                            SizedBox(
+                              height: 5.h,
+                            ),
+                            textForms,
                             SizedBox(
                               height: 5.h,
                             ),

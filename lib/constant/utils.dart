@@ -7,7 +7,8 @@ import 'package:wms/modules/http.dart';
 
 class Utils {
   static String baseUrl =
-      Device.deviceType == DeviceType.web ? "localhost:3000" : "10.0.2.2:3000";
+      Device.deviceType == DeviceType.web ? "localhost:3000" :
+       "10.0.2.2:3000";
   static String register = "user/register";
   static String login = "user/login";
   static String getAdminKey = "user/getAdminPublicKey";
@@ -54,9 +55,9 @@ class Utils {
     String paddedText = text;
     if (!text.endsWith('==')) {
       if (!text.endsWith('=')) {
-        paddedText = paddedText + '=';
+        paddedText = '$paddedText=';
       }
-      paddedText = paddedText + '=';
+      paddedText = '$paddedText=';
     }
     try {
       return encrypterSalsa20.decrypt(Encrypted.fromBase64(paddedText),
@@ -117,21 +118,21 @@ class Utils {
   }
 
   static Future<UserLogs> superDecryptasAdmin(UserLogs logs) async {
-    final prefs = await SharedPreferences.getInstance();
-    var adminPublicKey = '';
-    var res = await getAdminPublicKey();
-    if (res['success']) {
-      adminPublicKey = res['user'][0]['public_key'];
-    } else {
-      print('gagal lmao');
-    }
-    var email = 'admin@gmail.com';
-    var adminPrivateKey = prefs.getString('${email}privatekey')!;
-    print('Private key: $adminPrivateKey');
+    // final prefs = await SharedPreferences.getInstance();
+    // // var adminPublicKey = '';
+    // // var res = await getAdminPublicKey();
+    // // if (res['success']) {
+    // //   adminPublicKey = res['user'][0]['public_key'];
+    // // } else {
+    // //   print('gagal lmao');
+    // // }
+    // // var email = 'admin@gmail.com';
+    // // var adminPrivateKey = prefs.getString('${email}privatekey')!;
+    // // print('Private key: $adminPrivateKey');
 
-    var rsaDecryptedTitle = await decryptSalsa20(logs.title);
+    var rsaDecryptedTitle = decryptSalsa20(logs.title);
     // await RSA.decryptPKCS1v15(logs.title, adminPrivateKey);
-    var rsaDecryptedDescription = await decryptSalsa20(logs.description);
+    var rsaDecryptedDescription = decryptSalsa20(logs.description);
     // await RSA.decryptPKCS1v15(logs.description, adminPrivateKey);
     print('DecryptedTitle: $rsaDecryptedTitle');
     var vigenere = Vigenere('kripasik');

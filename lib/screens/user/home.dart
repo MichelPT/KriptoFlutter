@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<UserLogs> logsList = List.empty(growable: true);
   @override
   Widget build(BuildContext context) {
-    getLogsList();
+    // getLogsList();
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
