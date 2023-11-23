@@ -28,69 +28,71 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     getLogsList();
-    return Scaffold(
-      appBar: AppBar(
-          actions: [
-            InkWell(
-              borderRadius: BorderRadius.circular(40),
-              onTap: () {
-                removeSession(context);
-              },
-              child: const Icon(
-                Icons.logout,
-                color: Colors.red,
-                size: 32,
-              ),
-            ),
-            const SizedBox(
-              width: 24,
-            )
-          ],
-          title: FutureBuilder<String>(
-            future: getInfo(),
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-              if (snapshot.hasData) {
-                return Text('${snapshot.data}\'s working logbook');
-              } else {
-                return const Text('');
-              }
-            },
-          )),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: ElevatedButton.icon(
-            style: const ButtonStyle(
-                minimumSize: MaterialStatePropertyAll(Size(25, 60))),
-            onPressed: () {
-              Get.to(() => const AddLogScreen());
-            },
-            icon: const Icon(Icons.add_task_sharp),
-            label: const Text('Add a New Log')),
-      ),
-      body: FutureBuilder<List<UserLogs>>(
-        future: http_module.getAllLogsasAdmin(email),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return const Center(
-              child: Text('An error has occurred!'),
-            );
-          } else if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) => Card(
-                child: ListTile(
-                  title: Text(snapshot.data![index].title),
-                  subtitle: Text(snapshot.data![index].description),
-                  leading: Image.memory(Uint8List.fromList(const HexDecoder().convert(snapshot.data![index].image))),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+            actions: [
+              InkWell(
+                borderRadius: BorderRadius.circular(40),
+                onTap: () {
+                  removeSession(context);
+                },
+                child: const Icon(
+                  Icons.logout,
+                  color: Colors.red,
+                  size: 32,
                 ),
               ),
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
+              const SizedBox(
+                width: 24,
+              )
+            ],
+            title: FutureBuilder<String>(
+              future: getInfo(),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (snapshot.hasData) {
+                  return Text('${snapshot.data}\'s working logbook');
+                } else {
+                  return const Text('');
+                }
+              },
+            )),
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: ElevatedButton.icon(
+              style: const ButtonStyle(
+                  minimumSize: MaterialStatePropertyAll(Size(25, 60))),
+              onPressed: () {
+                Get.to(() => const AddLogScreen());
+              },
+              icon: const Icon(Icons.add_task_sharp),
+              label: const Text('Add a New Log')),
+        ),
+        body: FutureBuilder<List<UserLogs>>(
+          future: http_module.getAllLogsasAdmin(email),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text('An error has occurred!'),
+              );
+            } else if (snapshot.hasData) {
+              return ListView.builder(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) => Card(
+                  child: ListTile(
+                    title: Text(snapshot.data![index].title),
+                    subtitle: Text(snapshot.data![index].description),
+                    leading: Image.memory(Uint8List.fromList(const HexDecoder().convert(snapshot.data![index].image))),
+                  ),
+                ),
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        ),
       ),
     );
   }

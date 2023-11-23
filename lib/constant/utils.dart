@@ -1,14 +1,13 @@
-import 'dart:convert';
-import 'package:cryptography/cryptography.dart';
-import 'package:fast_rsa/fast_rsa.dart';
 import 'package:multi_cipher/multi_cipher.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:wms/models/user_logs.dart';
 import 'package:wms/modules/http.dart';
 
 class Utils {
-  static String baseUrl = "10.0.2.2:3000";
+  static String baseUrl =
+      Device.deviceType == DeviceType.web ? "localhost:3000" : "10.0.2.2:3000";
   static String register = "user/register";
   static String login = "user/login";
   static String getAdminKey = "user/getAdminPublicKey";

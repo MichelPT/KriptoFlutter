@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 import 'package:hex/hex.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:responsive_sizer/responsive_sizer.dart' as responsive_sizer;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wms/custom_widgets/widgets.dart';
 import 'package:wms/modules/http.dart';
@@ -30,6 +30,46 @@ class _AddLogScreenState extends State<AddLogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Widget textForms = Column(
+      children: [
+        SizedBox(
+          height: 10.h,
+        ),
+        CustomWidgets.getCustomFormField((newValue) {
+          setState(() {
+            enteredTitle = newValue!;
+          });
+        }, enteredTitle, 'Title', 'logTitle'),
+        SizedBox(
+          height: 5.h,
+        ),
+        CustomWidgets.getCustomFormField((newValue) {
+          setState(() {
+            enteredDescription = newValue!;
+          });
+        }, enteredDescription, 'Description', 'logDescription')
+      ],
+    );
+    final Widget imageUpload = Column(
+      children: [
+        const Text(
+          'Please input your image with the following conditions:\n1. It can prove your work hence it needs to be related to it\n2. It is mandatory to have date and time to be in the image\n3. Please avoid using innapropriate images or photos',
+        ),
+        SizedBox(
+          height: 10.h,
+        ),
+        SizedBox(
+            width: 20.w,
+            height: 20.h,
+            child: image == null
+                ? Image.asset('assets/images/no_image.png')
+                : Image.memory(image)),
+        ElevatedButton.icon(
+            onPressed: pickImage,
+            icon: const Icon(Icons.add_a_photo_rounded),
+            label: const Text('Add an image')),
+      ],
+    );
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -42,69 +82,49 @@ class _AddLogScreenState extends State<AddLogScreen> {
                 key: logFormKey,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Column(
-                            children: [
-                              SizedBox(
-                                height: 10.h,
-                              ),
-                              CustomWidgets.getCustomFormField((newValue) {
-                                setState(() {
-                                  enteredTitle = newValue!;
-                                });
-                              }, enteredTitle, 'Title', 'logTitle'),
-                              SizedBox(
-                                height: 5.h,
-                              ),
-                              CustomWidgets.getCustomFormField((newValue) {
-                                setState(() {
-                                  enteredDescription = newValue!;
-                                });
-                              }, enteredDescription, 'Description',
-                                  'logDescription')
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              const Text(
-                                'Please input your image with the following conditions:\n1. It can prove your work hence it needs to be related to it\n2. It is mandatory to have date and time to be in the image\n3. Please avoid using innapropriate images or photos',
-                              ),
-                              SizedBox(
-                                height: 10.h,
-                              ),
-                              SizedBox(
-                                  width: 20.w,
-                                  height: 20.h,
-                                  child: image == null
-                                      ? Image.asset(
-                                          'assets/images/no_image.png')
-                                      : Image.memory(image)),
-                              ElevatedButton.icon(
-                                  onPressed: pickImage,
-                                  icon: const Icon(Icons.add_a_photo_rounded),
-                                  label: const Text('Add an image')),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5.h,
-                      ),
-                      ElevatedButton.icon(
-                          style: ButtonStyle(
-                              foregroundColor:
-                                  MaterialStateProperty.all(Colors.white),
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.amber[700]),
-                              minimumSize:
-                                  MaterialStateProperty.all(Size(7.w, 8.h))),
-                          icon: const Icon(Icons.file_upload_rounded),
-                          onPressed: uploadNewLog,
-                          label: const Text('Upload Log'))
-                    ])),
+                    children: responsive_sizer.Device.screenType ==
+                            responsive_sizer.ScreenType.mobile
+                        ? [
+                            textForms,
+                            imageUpload,
+                            SizedBox(
+                              height: 5.h,
+                            ),
+                            ElevatedButton.icon(
+                                style: ButtonStyle(
+                                    foregroundColor:
+                                        MaterialStateProperty.all(Colors.white),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        Colors.amber[700]),
+                                    minimumSize: MaterialStateProperty.all(
+                                        Size(7.w, 8.h))),
+                                icon: const Icon(Icons.file_upload_rounded),
+                                onPressed: uploadNewLog,
+                                label: const Text('Upload Log'))
+                          ]
+                        : [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                textForms,
+                                imageUpload,
+                              ],
+                            ),
+                            SizedBox(
+                              height: 5.h,
+                            ),
+                            ElevatedButton.icon(
+                                style: ButtonStyle(
+                                    foregroundColor:
+                                        MaterialStateProperty.all(Colors.white),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        Colors.amber[700]),
+                                    minimumSize: MaterialStateProperty.all(
+                                        Size(7.w, 8.h))),
+                                icon: const Icon(Icons.file_upload_rounded),
+                                onPressed: uploadNewLog,
+                                label: const Text('Upload Log'))
+                          ])),
           ),
         ),
       ),
@@ -119,7 +139,7 @@ class _AddLogScreenState extends State<AddLogScreen> {
       var res = await uploadLogs(enteredTitle, enteredDescription, hex, email);
       if (res['success']) {
         Fluttertoast.showToast(msg: 'Log has been successfully uploaded');
-        Get.offAll(() =>const HomeScreen());
+        Get.offAll(() => const HomeScreen());
       } else {
         Fluttertoast.showToast(msg: 'Upload log failed', textColor: Colors.red);
       }
